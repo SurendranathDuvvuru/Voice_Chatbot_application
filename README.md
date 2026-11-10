@@ -48,8 +48,42 @@ The primary objective is to develop an intelligent, responsive and privacy-consc
 
 All core components are intended to run locally using free or open-source software and appropriately licensed models.
 
+## 5. System Architecture
 
-## 5. Project Prerequisites
+The application follows a sequential Speech-to-Text → LLM → Text-to-Speech architecture.
+
+          USER
+            |
+            v
+     Voice Input
+     (Microphone)
+            |
+            v
+    Speech Recognition
+    (Faster-Whisper)
+            |
+            v
+     Recognized Text
+            |
+            v
+    AI Response Engine
+    (Ollama + LLM)
+            |
+            v
+     Generated Text
+            |
+            v
+    Text-to-Speech
+        (Piper)
+            |
+            v
+      Voice Output
+            |
+            v
+       USER
+
+
+## 6. Project Prerequisites
 
 The initial development environment:
 
@@ -59,7 +93,29 @@ The initial development environment:
 - Python: Version 3.15
 - Internet: Required initially for downloading software and models; not required for normal local inference after setup.
 
-## 6. Development Roadmap
+## 7. How to Run the Application
+
+Once the application modules and Streamlit interface have been implemented:
+
+**Step 1:** Activate the Python virtual environment.
+
+venv\Scripts\activate
+
+**Step 2:** Ensure Ollama is running and the selected model is available.
+
+ollama list
+
+**Step 3:** Start the Voice Chatbot.
+
+streamlit run app.py
+
+**Step 4:** Open the local application in your browser.
+
+http://localhost:8501
+
+**Step 5:** Click the microphone button, speak your question and receive an AI-generated spoken response.
+
+## 8. Development Roadmap
 
 | Phase | Development Activity | Status |
 |---|---|---|
@@ -71,7 +127,7 @@ The initial development environment:
 | Phase 6 | Component integration and testing | Planned |
 | Phase 7 | Performance evaluation and optimization | Planned |
 
-## 7. Data Sources and Evaluation
+## 9. Data Sources and Evaluation
 
 The project will leverage publicly available speech datasets and custom evaluation data.
 
@@ -89,11 +145,11 @@ Evaluation metrics will include:
 - End-to-End Response Latency
 - Speech Intelligibility
 
-## 8. Expected Outcome
+## 10. Expected Outcome
 
 The expected outcome is a fully functional, locally deployed AI Voice Chatbot that can listen, understand and respond naturally through voice conversations.
 
-## 9. Author
+## 11. Author
 
 **Surendranath Duvvuru**
 
