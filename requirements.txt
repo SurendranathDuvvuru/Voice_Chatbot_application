@@ -1,0 +1,34 @@
+# ==========================================
+# AI Voice Chatbot - Python Dependencies
+# Python Version: 3.11
+# Platform: Windows 11 (CPU)
+# ==========================================
+
+# Speech Recognition
+faster-whisper
+
+# Large Language Model Integration
+ollama
+
+# Text-to-Speech
+piper-tts
+
+# Audio Recording and Processing
+sounddevice
+soundfile
+scipy
+numpy
+
+# Conversational Application Interface
+streamlit
+
+# HTTP Requests
+requests
+
+# Data Processing and Evaluation
+pandas
+
+# ==========================================
+# Development and Testing
+# ==========================================
+pytest
