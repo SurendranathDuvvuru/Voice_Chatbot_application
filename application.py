@@ -164,17 +164,40 @@ for index, message in enumerate(st.session_state.messages):
         if message["role"] == "assistant" and index in st.session_state.last_audio:
             st.audio(st.session_state.last_audio[index], format="audio/wav")
 
-# Typed input
-typed_prompt = st.chat_input("Type your message…")
+# ==========================================
+# TEXT INPUT - CHAT INTERFACE
+# ==========================================
+
+typed_prompt = st.chat_input("Type your message...")
+
 if typed_prompt:
-    st.session_state.messages.append({"role": "user", "content": typed_prompt})
+    # Display and store the user's message
+    st.session_state.messages.append({
+        "role": "user",
+        "content": typed_prompt
+    })
+
     try:
-        with st.spinner("Thinking locally…"):
-            answer = ask_ollama(typed_prompt, st.session_state.messages[:-1], llm_model)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+        with st.spinner("Generating your response..."):
+
+            answer = ask_ollama(
+                typed_prompt,
+                st.session_state.messages[:-1],
+                llm_model
+            )
+
+        # Store assistant response
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer
+        })
+
     except Exception as exc:
-        st.error(f"Could not get a response from Ollama: {exc}")
+        st.error(f"Response generation failed: {exc}")
+
+    # Refresh conversation display
     st.rerun()
+
 
 st.divider()
 st.markdown("### Voice input")
