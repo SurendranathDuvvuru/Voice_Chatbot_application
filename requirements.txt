@@ -1,6 +1,6 @@
 # ==========================================
 # AI Voice Chatbot - Python Dependencies
-# Python Version: 3.11
+# Python Version: 3.11 - Streamlit Cloud
 # Platform: Windows 11 (CPU)
 # ==========================================
 

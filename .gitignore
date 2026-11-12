@@ -29,7 +29,6 @@ models/
 *.bin
 *.pt
 *.pth
-*.onnx
 *.safetensors
 *.gguf
 
@@ -65,3 +64,8 @@ htmlcov/
 
 # Streamlit secrets
 .streamlit/secrets.toml
+
+# Allow the Piper voice model required by the application
+!models/
+!models/en_US-lessac-medium.onnx
+!models/en_US-lessac-medium.onnx.json
