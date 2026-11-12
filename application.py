@@ -50,26 +50,16 @@ def transcribe_audio(audio_bytes: bytes, model_name: str) -> str:
     finally:
         Path(audio_path).unlink(missing_ok=True)
 
-'''
 def ask_ollama(prompt: str, history: list, model_name: str) -> str:
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    # Keep a bounded conversation window to reduce CPU/RAM use.
     messages.extend(history[-12:])
     messages.append({"role": "user", "content": prompt})
-    result = ollama.chat(
-        model=model_name,
-        messages=messages,
-        options={"temperature": 0.4, "num_ctx": 4096},
+
+    #api_key = os.getenv("OLLAMA_API_KEY")
+    api_key = st.secrets.get(
+    "OLLAMA_API_KEY",
+    os.getenv("OLLAMA_API_KEY", "")
     )
-    return result["message"]["content"].strip()
-'''
-
-def ask_ollama(prompt: str, history: list, model_name: str) -> str:
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    messages.extend(history[-12:])
-    messages.append({"role": "user", "content": prompt})
-
-    api_key = os.getenv("OLLAMA_API_KEY")
 
     if api_key:
         # Ollama Cloud
@@ -89,7 +79,12 @@ def ask_ollama(prompt: str, history: list, model_name: str) -> str:
             },
             timeout=180
         )
-        response.raise_for_status()
+#       response.raise_for_status()
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"Ollama Cloud API error "
+                f"{response.status_code}: {response.text}"
+                )
         result = response.json()
     else:
         # Local Ollama
