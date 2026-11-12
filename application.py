@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+import requests
 
 import streamlit as st
 import ollama
@@ -11,7 +12,8 @@ from faster_whisper import WhisperModel
 
 # Application configuration
 APP_DIR = Path(__file__).resolve().parent
-DEFAULT_LLM = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+# DEFAULT_LLM = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
+DEFAULT_LLM = st.secrets.get("OLLAMA_MODEL", os.getenv("OLLAMA_MODEL", "llama3.2:3b"))
 WHISPER_MODEL_NAME = os.getenv("WHISPER_MODEL", "base")
 PIPER_MODEL = Path(os.getenv("PIPER_MODEL", APP_DIR / "models" / "en_US-lessac-medium.onnx"))
 
@@ -48,6 +50,7 @@ def transcribe_audio(audio_bytes: bytes, model_name: str) -> str:
     finally:
         Path(audio_path).unlink(missing_ok=True)
 
+'''
 def ask_ollama(prompt: str, history: list, model_name: str) -> str:
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     # Keep a bounded conversation window to reduce CPU/RAM use.
@@ -59,6 +62,48 @@ def ask_ollama(prompt: str, history: list, model_name: str) -> str:
         options={"temperature": 0.4, "num_ctx": 4096},
     )
     return result["message"]["content"].strip()
+'''
+
+def ask_ollama(prompt: str, history: list, model_name: str) -> str:
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(history[-12:])
+    messages.append({"role": "user", "content": prompt})
+
+    api_key = os.getenv("OLLAMA_API_KEY")
+
+    if api_key:
+        # Ollama Cloud
+        response = requests.post(
+            "https://ollama.com/api/chat",
+            headers={
+                "Authorization": f"Bearer {api_key}"
+            },
+            json={
+                "model": model_name,
+                "messages": messages,
+                "stream": False,
+                "options": {
+                    "temperature": 0.4,
+                    "num_ctx": 4096
+                }
+            },
+            timeout=180
+        )
+        response.raise_for_status()
+        result = response.json()
+    else:
+        # Local Ollama
+        result = ollama.chat(
+            model=model_name,
+            messages=messages,
+            options={
+                "temperature": 0.4,
+                "num_ctx": 4096
+            }
+        )
+
+    return result["message"]["content"].strip()
+
 
 def synthesize_speech(text: str) -> bytes:
     piper_executable = shutil.which("piper")
@@ -151,9 +196,7 @@ if recording is not None:
                 st.markdown(f"**Recognized speech:** {spoken_text}")
                 st.session_state.messages.append({"role": "user", "content": spoken_text})
                 with st.spinner("Generating your answer…"):
-                    answer = ask_ollama(
-                        spoken_text, st.session_state.messages[:-1], llm_model
-                    )
+                    answer = ask_ollama(spoken_text, st.session_state.messages[:-1], llm_model)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 st.rerun()
         except Exception as exc:
