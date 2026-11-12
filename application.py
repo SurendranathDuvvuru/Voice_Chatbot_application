@@ -137,7 +137,7 @@ if "last_audio" not in st.session_state:
     st.session_state.last_audio = {}
 
 st.title("🎙️ AI Voice Assistant")
-st.caption("A private, locally running voice chatbot powered by open-source AI.")
+st.caption("A voice chatbot powered by open-source AI.")
 
 with st.sidebar:
     st.subheader("Local model settings")
@@ -148,7 +148,7 @@ with st.sidebar:
         index=["tiny", "base", "small"].index(WHISPER_MODEL_NAME)
         if WHISPER_MODEL_NAME in ["tiny", "base", "small"] else 1,
     )
-    st.caption("For 16 GB RAM and CPU-only use, start with Llama 3.2 3B and Whisper base or tiny.")
+    st.caption("For 16 GB RAM and CPU-only use, start with Llama 3.2 3B than Gemma4 and Whisper base or tiny.")
     if st.button("Clear conversation", use_container_width=True):
         st.session_state.messages = []
         st.session_state.last_audio = {}
@@ -219,4 +219,4 @@ if latest_assistant:
         except Exception as exc:
             st.error(f"Text-to-speech failed: {exc}")
 
-st.caption("Audio recordings are processed locally by this application. This prototype does not save recordings to a database.")
+st.caption("This prototype does not save recordings to a database.")
