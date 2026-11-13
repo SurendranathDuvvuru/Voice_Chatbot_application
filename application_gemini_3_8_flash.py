@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 from pathlib import Path
 import streamlit as st
 from google import genai
@@ -65,54 +66,99 @@ def get_gemini_api_key() -> str:
 
 
 def ask_gemini(prompt: str, history: list, model_name: str) -> str:
-    """Generate a response with Gemini while preserving recent chat history."""
+    """Generate a response with Gemini and retry temporary server errors."""
+
     api_key = get_gemini_api_key()
+
     if not api_key:
         raise RuntimeError(
-            "Gemini API key is missing. Add GEMINI_API_KEY to Streamlit Cloud "
-            "Secrets or set it as a local environment variable."
+            "Gemini API key is missing. Add GEMINI_API_KEY "
+            "to Streamlit Cloud Secrets or local environment variables."
         )
 
     client = genai.Client(api_key=api_key)
 
-    # Gemini uses 'model' for assistant turns and 'user' for user turns.
+    # Prepare conversation history
     contents = []
+
     for message in history[-12:]:
-        role = "model" if message.get("role") == "assistant" else "user"
-        text = message.get("content", "")
-        if text:
+        role = (
+            "model"
+            if message.get("role") == "assistant"
+            else "user"
+        )
+
+        message_text = message.get("content", "")
+
+        if message_text:
             contents.append({
                 "role": role,
-                "parts": [{"text": text}],
+                "parts": [{"text": message_text}],
             })
 
+    # Add current user prompt
     contents.append({
         "role": "user",
         "parts": [{"text": prompt}],
     })
 
-    # Gemini 3.8 Flash uses its own thinking defaults; avoid legacy sampling
-    # parameters such as temperature/top_p/top_k.
+    # Gemini generation configuration
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_PROMPT,
     )
 
-    try:
-        response = client.models.generate_content(
-            model=model_name,
-            contents=contents,
-            config=config,
-        )
-    except Exception as exc:
-        raise RuntimeError(f"Gemini API request failed: {exc}") from exc
+    # Retry configuration
+    max_attempts = 3
+    retry_delays = [2, 5]
 
-    answer = (response.text or "").strip()
-    if not answer:
-        raise RuntimeError(
-            "Gemini returned an empty response. Please try rephrasing your question."
-        )
-    return answer
+    for attempt in range(max_attempts):
 
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=contents,
+                config=config,
+            )
+
+            answer = (response.text or "").strip()
+
+            if not answer:
+                raise RuntimeError(
+                    "Gemini returned an empty response."
+                )
+
+            return answer
+
+        except Exception as exc:
+
+            error_code = getattr(exc, "code", None)
+
+            # Handle temporary Gemini server errors
+            if (
+                str(error_code) == "503"
+                or "503" in str(exc)
+                or "UNAVAILABLE" in str(exc)
+            ):
+
+                if attempt < max_attempts - 1:
+
+                    delay = retry_delays[attempt]
+
+                    st.warning(
+                        f"Gemini is busy. Retrying in {delay} seconds "
+                        f"(attempt {attempt + 2}/{max_attempts})..."
+                    )
+
+                    time.sleep(delay)
+                    continue
+
+            raise RuntimeError(
+                f"Gemini API request failed: {exc}"
+            ) from exc
+
+    raise RuntimeError(
+        "Gemini could not generate a response after multiple attempts."
+    )
 
 def synthesize_speech(text: str) -> bytes:
     piper_executable = shutil.which("piper")
