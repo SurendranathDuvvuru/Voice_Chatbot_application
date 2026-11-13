@@ -9,6 +9,7 @@ faster-whisper
 
 # Large Language Model Integration
 ollama
+google-genai
 
 # Text-to-Speech
 piper-tts
