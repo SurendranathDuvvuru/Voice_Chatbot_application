@@ -1,0 +1,7 @@
+# VoInCon AI - Streamlit Cloud dependencies
+# Recommended Python runtime: 3.11
+
+streamlit
+google-genai
+faster-whisper
+piper-tts
