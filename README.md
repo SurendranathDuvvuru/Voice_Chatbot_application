@@ -38,7 +38,7 @@ The primary objective is to develop an intelligent, responsive and privacy-consc
 | Programming Language | Python 3.15 |
 | Speech Recognition | Faster-Whisper |
 | LLM Runtime | Ollama |
-| Language Model | Llama 3.2 3B |
+| Language Model | Llama 3.2 3B & Gemini 3.8 Flash |
 | NLP | Hugging Face Transformers |
 | Text-to-Speech | Piper |
 | Audio Processing | SoundDevice, SoundFile |
@@ -90,7 +90,7 @@ The initial development environment:
 - Operating System: Windows 11
 - RAM: 16 GB
 - GPU: No dedicated GPU (CPU-based execution)
-- Python: Version 3.15
+- Python: Version 3.11
 - Internet: Required initially for downloading software and models; not required for normal local inference after setup.
 
 ## 7. How to Run the Application
@@ -120,12 +120,12 @@ http://localhost:8501
 | Phase | Development Activity | Status |
 |---|---|---|
 | Phase 1 | Environment setup and dependency installation | Completed |
-| Phase 2 | Speech-to-Text implementation | Planned |
-| Phase 3 | LLM integration and response generation | Planned |
-| Phase 4 | Text-to-Speech implementation | Planned |
-| Phase 5 | Streamlit interface development | Planned |
-| Phase 6 | Component integration and testing | Planned |
-| Phase 7 | Performance evaluation and optimization | Planned |
+| Phase 2 | Speech-to-Text implementation | Completed |
+| Phase 3 | LLM integration and response generation | Completed |
+| Phase 4 | Text-to-Speech implementation | Completed |
+| Phase 5 | Streamlit interface development | Completed |
+| Phase 6 | Component integration and testing | Running |
+| Phase 7 | Performance evaluation and optimization | Running |
 
 ## 9. Data Sources and Evaluation
 

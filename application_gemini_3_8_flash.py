@@ -3,12 +3,29 @@ import shutil
 import subprocess
 import tempfile
 import time
+import logging
+import sys
 from pathlib import Path
 import streamlit as st
 from google import genai
 from google.genai import types
 from faster_whisper import WhisperModel
 
+
+# ==========================================
+# APPLICATION LOGGING CONFIGURATION
+# ==========================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ],
+    force=True
+)
+
+logger = logging.getLogger("VoInCon_AI")
 
 # Application configuration
 APP_DIR = Path(__file__).resolve().parent
@@ -77,6 +94,15 @@ def ask_gemini(prompt: str, history: list, model_name: str) -> str:
         )
 
     client = genai.Client(api_key=api_key)
+    
+    # Log user input
+    start_time = time.perf_counter()
+
+    logger.info(
+        "USER INPUT | Model: %s | Input: %s",
+        model_name,
+        prompt
+    )
 
     # Prepare conversation history
     contents = []
@@ -121,7 +147,20 @@ def ask_gemini(prompt: str, history: list, model_name: str) -> str:
             )
 
             answer = (response.text or "").strip()
+            # Log AI-generated output
+            response_time = time.perf_counter() - start_time
 
+            logger.info(
+                "AI OUTPUT | Model: %s | Output: %s",
+                model_name,
+                answer
+                )
+            
+            logger.info(
+                "REQUEST SUCCESS | Response Time: %.2f seconds",
+                response_time
+                )
+            
             if not answer:
                 raise RuntimeError(
                     "Gemini returned an empty response."
@@ -152,6 +191,8 @@ def ask_gemini(prompt: str, history: list, model_name: str) -> str:
                     time.sleep(delay)
                     continue
 
+            logger.exception("GEMINI API REQUEST FAILED")
+            
             raise RuntimeError(
                 f"Gemini API request failed: {exc}"
             ) from exc
