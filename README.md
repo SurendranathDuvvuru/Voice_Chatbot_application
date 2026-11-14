@@ -9,7 +9,7 @@ The AI-Powered Voice Chatbot application is a Python-based conversational applic
 
 The application listens to user queries, converts speech into text, processes the input using a Large Language Model (LLM), and generates intelligent responses in natural speech.
 
-The primary objective is to develop an intelligent, responsive and privacy-conscious Voice Chatbot using free and open-source AI technologies, running entirely on local infrastructure without depending on paid AI APIs.
+The primary objective is to develop an intelligent, responsive and privacy-conscious Voice Chatbot using free and open-source AI technologies, running entirely on local infrastructure/ free APIs without depending on paid AI APIs.
 
 **Project Category:** Artificial Intelligence | Machine Learning | NLP | Generative AI
 
@@ -22,7 +22,7 @@ The primary objective is to develop an intelligent, responsive and privacy-consc
 - Integrate an LLM for contextual understanding and intelligent response generation.
 - Implement Text-to-Speech (TTS) to generate spoken responses.
 - Enable multi-turn conversations and conversational context.
-- Minimize operational costs by leveraging open-source technologies and locally deployed models.
+- Minimize operational costs by leveraging open-source technologies, locally deployed models and using available free APIs.
 - Establish a foundation for future RAG and Agentic AI capabilities.
 
 ## 3. Key Features
@@ -35,7 +35,7 @@ The primary objective is to develop an intelligent, responsive and privacy-consc
 
 | Component | Technology |
 |---|---|
-| Programming Language | Python 3.15 |
+| Programming Language | Python 3.11 |
 | Speech Recognition | Faster-Whisper |
 | LLM Runtime | Ollama |
 | Language Model | Llama 3.2 3B & Gemini 3.8 Flash |
@@ -91,7 +91,7 @@ The initial development environment:
 - RAM: 16 GB
 - GPU: No dedicated GPU (CPU-based execution)
 - Python: Version 3.11
-- Internet: Required initially for downloading software and models; not required for normal local inference after setup.
+- Internet: Required initially for downloading software and locally rinning LLMs and to use free APIs furhter.
 
 ## 7. How to Run the Application
 
@@ -107,11 +107,11 @@ ollama list
 
 **Step 3:** Start the Voice Chatbot.
 
-streamlit run app.py
+streamlit run application.py                     or
+streamlit run application_llama323b.py           or
+streamlit run application_gemini_3_8_flash.py
 
-**Step 4:** Open the local application in your browser.
-
-http://localhost:8501
+**Step 4:** Open/ invoke the streamlit application in your browser.
 
 **Step 5:** Click the microphone button, speak your question and receive an AI-generated spoken response.
 
@@ -124,8 +124,8 @@ http://localhost:8501
 | Phase 3 | LLM integration and response generation | Completed |
 | Phase 4 | Text-to-Speech implementation | Completed |
 | Phase 5 | Streamlit interface development | Completed |
-| Phase 6 | Component integration and testing | Running |
-| Phase 7 | Performance evaluation and optimization | Running |
+| Phase 6 | Component integration and testing | In-progress |
+| Phase 7 | Performance evaluation and optimization | In-progress |
 
 ## 9. Data Sources and Evaluation
 
@@ -147,7 +147,7 @@ Evaluation metrics will include:
 
 ## 10. Expected Outcome
 
-The expected outcome is a fully functional, locally deployed AI Voice Chatbot that can listen, understand and respond naturally through voice conversations.
+The expected outcome is a fully functional, locally/ using API deployed AI Voice Chatbot that can listen, understand and respond naturally through voice conversations.
 
 ## 11. Author
 
